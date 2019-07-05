@@ -1,0 +1,7 @@
+{
+  "src/**/*.*(ts|tsx)": [
+    "pretty-quick --staged",
+    "npm run lint",
+    "git add"
+  ]
+}
