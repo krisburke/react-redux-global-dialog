@@ -1,52 +1,66 @@
 import React from 'react';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import logo from '../assets/images/logo.svg';
-import { Rotate } from '../common/components/Rotate';
+import { Button, Intent } from '@blueprintjs/core';
+import DialogContainer from '../dialog/DialogContainer';
+import { DialogOpts, DialogTypes } from '../dialog/dialogTypes';
+import * as dialogActions from '../dialog/dialogActions';
 
 const StyledApp = styled.div`
-    text-align: center;
-`;
-
-const AppHeader = styled.header`
-    background-color: #282c34;
-    min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
 `;
 
-const AppLogo = styled.img`
-    height: 40vmin;
-    pointer-events: none;
-`;
+const App: React.ElementType = ({ showDialog }: DispatchProps) => {
+    const handleShowSuccessDialog = (): void => {
+        showDialog({
+            dialogType: DialogTypes.SUCCESS_DIALOG,
+            dialogProps: {},
+        });
+    };
 
-const AppLink = styled.a`
-    color: #61dafb;
-`;
+    const handleShowWarningDialog = (): void => {
+        showDialog({
+            dialogType: DialogTypes.WARNING_DIALOG,
+            dialogProps: {
+                message: 'Note: you can pass in dialogProps to the dialog.',
+            },
+        });
+    };
 
-const App: React.FC = () => {
     return (
         <StyledApp>
-            <AppHeader>
-                <Rotate>
-                    <AppLogo src={logo} alt="logo" />
-                </Rotate>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <AppLink
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn React
-                </AppLink>
-            </AppHeader>
+            <div>
+                <h1>Let's open a dialog.</h1>
+                <Button
+                    type="button"
+                    intent={Intent.SUCCESS}
+                    text="Open Success Dialog"
+                    onClick={handleShowSuccessDialog}
+                />
+                <Button
+                    type="button"
+                    intent={Intent.WARNING}
+                    text="Open Warning Dialog"
+                    onClick={handleShowWarningDialog}
+                />
+            </div>
+            <DialogContainer />
         </StyledApp>
     );
 };
 
-export default App;
+interface DispatchProps {
+    showDialog: typeof dialogActions.showDialog;
+}
+
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+    showDialog: (dialogOpts: DialogOpts) =>
+        dispatch(dialogActions.showDialog(dialogOpts)),
+});
+
+export default connect<{}, DispatchProps>(
+    null,
+    mapDispatchToProps,
+)(App);
